@@ -40,3 +40,4 @@ support_tickets/output.csv
 
 # Runtime cache
 code/.cache/
+data/
