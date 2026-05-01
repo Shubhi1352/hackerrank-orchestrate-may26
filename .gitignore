@@ -31,3 +31,12 @@ data/index/
 data/embeddings/
 *.sqlite
 *.db
+
+# Corpus and ticket CSVs (excluded per submission rules)
+data/
+support_tickets/support_tickets.csv
+support_tickets/sample_support_tickets.csv
+support_tickets/output.csv
+
+# Runtime cache
+code/.cache/
