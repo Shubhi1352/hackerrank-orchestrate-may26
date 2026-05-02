@@ -66,23 +66,25 @@ async def groq_json_call(prompt: str, system: str = "") -> dict:
 
 
 async def gemini_text_call(prompt: str) -> str:
+    """
+    Generate response using Groq as fallback (Gemini quota exhausted).
+    Same function name so response_generator.py needs no changes.
+    """
     import asyncio
-    configure_gemini()
+    client = get_groq_client()
+
     try:
-        client = genai.Client(api_key=settings.GEMINI_API_KEY)
         loop = asyncio.get_event_loop()
         response = await loop.run_in_executor(
             None,
-            lambda: client.models.generate_content(
-                model=settings.GEMINI_MODEL,
-                contents=prompt,
-                config=types.GenerateContentConfig(
-                    temperature=0.0,
-                    max_output_tokens=settings.MAX_RESPONSE_TOKENS,
-                )
+            lambda: client.chat.completions.create(
+                model=settings.GROQ_MODEL,
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0.0,
+                max_tokens=settings.MAX_RESPONSE_TOKENS,
             )
         )
-        return response.text.strip()
+        return response.choices[0].message.content.strip()
     except Exception as e:
-        logger.error(f"Gemini call failed: {e}")
+        logger.error(f"Groq generation call failed: {e}")
         return ""
