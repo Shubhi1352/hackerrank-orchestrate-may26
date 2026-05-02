@@ -25,23 +25,30 @@ def _check_tier1(context: TicketContext) -> str:
 
 
 def _check_tier2(context: TicketContext) -> str:
-    """
-    Tier 2: Soft signals + classification risk.
-    Returns escalation reason string if should escalate, else empty string.
-    """
     combined = f"{context.ticket.subject or ''} {context.ticket.issue}".lower()
 
-    # Soft signal keywords
+    # Vague "site is down" type reports — can't answer without more info
+    vague_patterns = [
+        "site is down",
+        "nothing is working", 
+        "everything is broken",
+        "can't access anything",
+        "pages are not accessible",
+        "none of the pages",
+    ]
+    for pattern in vague_patterns:
+        if pattern in combined:
+            return f"Vague outage report — insufficient detail to answer safely: '{pattern}'"
+
     for signal in SOFT_ESCALATE_SIGNALS:
         if signal.lower() in combined:
             if context.classification and context.classification.risk_level == "high":
                 return f"Soft escalation signal + high risk: '{signal}'"
 
-    # High risk classification with no clear corpus path
     if context.classification and context.classification.risk_level == "high":
         issue_len = len(context.ticket.issue.strip())
         if issue_len < 50:
-            return "High risk ticket with insufficient detail to answer safely"
+            return "High risk ticket with insufficient detail"
 
     return ""
 

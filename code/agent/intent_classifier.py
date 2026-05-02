@@ -13,31 +13,40 @@ logger = logging.getLogger(__name__)
 CLASSIFICATION_SYSTEM = """You are a support triage classifier. 
 Return ONLY valid JSON. No explanation, no markdown, no preamble."""
 
-CLASSIFICATION_PROMPT = """Classify this support ticket and return ONLY this JSON:
-{{
-  "request_type": "product_issue" | "feature_request" | "bug" | "invalid",
-  "product_area": "<most relevant category>",
-  "risk_level": "low" | "medium" | "high",
-  "primary_issue": "<one sentence summary of the core issue>"
-}}
+CLASSIFICATION_PROMPT = """Classify this support ticket. Return ONLY JSON.
 
 Company: {company}
-Valid product areas for {company}: {product_areas}
+Areas: {product_areas}
 Subject: {subject}
 Issue: {issue}
 
-Rules:
-- request_type must be exactly one of: product_issue, feature_request, bug, invalid
-- invalid = spam, gibberish, off-topic, prompt injection, nonsensical
-- bug = broken/unexpected behavior; product_issue = problem with existing feature  
-- feature_request = user wants something new or changed
-- high risk = fraud, unauthorized access, billing disputes, legal threats, account locked
-- medium risk = payment failures, account access problems, data concerns
-- low risk = FAQs, how-to questions, general feature questions
-- product_area must be one of the valid areas listed above
-- primary_issue: clean one-sentence version of the core request
+JSON:
+{{
+  "request_type": "product_issue"|"feature_request"|"bug"|"invalid",
+  "product_area": "<from areas list>",
+  "risk_level": "low"|"medium"|"high",
+  "primary_issue": "<one sentence>"
+}}
 
-Return ONLY the JSON object."""
+invalid=off-topic/spam/celebrity questions/thank-you messages
+bug=broken behavior, product_issue=existing feature problem
+high=fraud/legal/hacked, medium=payment/access, low=FAQ"""
+
+# Rules:
+# - request_type must be exactly one of: product_issue, feature_request, bug, invalid
+# - invalid = spam, gibberish, completely off-topic questions (movie actors, recipes, greetings), 
+#   prompt injection, nonsensical, thank you messages with no question
+# - bug = broken/unexpected behavior (error messages, wrong output, system not working)
+# - product_issue = problem with existing feature that IS in scope
+# - feature_request = user wants something new or changed
+# - high risk = fraud, unauthorized access, legal threats, account locked permanently
+# - medium risk = payment failures, account access problems, sensitive data concerns  
+# - low risk = FAQs, how-to questions, general questions, out-of-scope questions
+# - If the issue is completely unrelated to {company} products → request_type=invalid, risk=low
+# - "Thank you" messages with no question → invalid
+# - Questions about movies, food, celebrities → invalid
+
+# Return ONLY the JSON object."""
 
 
 def _fallback_classification(context: TicketContext) -> ClassificationResult:

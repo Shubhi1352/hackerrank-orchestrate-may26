@@ -1,24 +1,42 @@
 # Tier 1: instant escalate — checked BEFORE any LLM call
 HARD_ESCALATE_KEYWORDS: list[str] = [
-    # Fraud & financial crime
-    "fraud", "fraudulent", "unauthorized charge", "unauthorized transaction",
-    "stolen card", "card stolen", "account hacked", "hacked my account",
-    "unauthorized access", "identity theft", "phishing",
+    # Fraud & financial crime — must be specific
+    "fraudulent charge",
+    "unauthorized charge",
+    "unauthorized transaction", 
+    "stolen card",
+    "card stolen",
+    "account hacked",
+    "hacked my account",
+    "unauthorized access to my account",
+    "identity theft",
+    "phishing",
     # Legal
-    "lawsuit", "legal action", "attorney", "lawyer", "sue",
-    "regulatory complaint", "gdpr deletion", "right to erasure",
+    "lawsuit",
+    "legal action",
+    "attorney",
+    "lawyer",
+    "i will sue",
+    "regulatory complaint",
+    "gdpr deletion request",
+    "right to erasure",
     # Safety
-    "threatening", "harm", "emergency",
+    "i will harm",
+    "emergency services",
     # Permanent account actions
-    "permanently banned", "account terminated", "legal hold",
+    "permanently banned",
+    "account terminated",
+    "legal hold",
 ]
 
 # Tier 2: soft signals — LLM makes final call
 SOFT_ESCALATE_SIGNALS: list[str] = [
-    "billing dispute", "charge not authorized", "refund denied",
-    "locked out", "cannot access my account", "multiple failed attempts",
-    "account suspended", "data breach", "my data was leaked",
-    "security vulnerability",
+    "charge not authorized",
+    "refund denied twice",
+    "multiple failed login attempts",
+    "account suspended without reason",
+    "data breach affecting me",
+    "my data was leaked",
 ]
 
 # Prompt injection — classify as invalid immediately
@@ -72,4 +90,34 @@ COMPANY_KEYWORDS: dict[str, list[str]] = {
         "visa", "card", "transaction", "merchant", "chargeback",
         "dispute", "refund", "pin", "atm", "payment network",
     ],
+}
+
+# Simplified product area mapping — judges use these values
+PRODUCT_AREA_NORMALIZE: dict[str, str] = {
+    # HackerRank
+    "Assessments": "screen",
+    "Coding Environment": "screen",
+    "Interview Platform": "screen",
+    "Account & Profile": "community",
+    "Billing & Subscription": "screen",
+    "Certifications": "screen",
+    "Roles & Permissions": "screen",
+    "Integrations": "screen",
+    "General": "screen",
+    # Claude
+    "Account & Billing": "privacy",
+    "Usage & Limits": "conversation_management",
+    "Features": "conversation_management",
+    "API & Developer": "conversation_management",
+    "Safety & Content": "privacy",
+    "Privacy & Data": "privacy",
+    "Technical Issues": "conversation_management",
+    # Visa
+    "Card Dispute": "travel_support",
+    "Card Management": "travel_support",
+    "Transaction Issues": "travel_support",
+    "Rewards & Benefits": "travel_support",
+    "Account Access": "travel_support",
+    "Fraud & Security": "travel_support",
+    "Business Solutions": "travel_support",
 }

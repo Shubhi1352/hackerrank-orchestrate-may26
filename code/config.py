@@ -7,6 +7,7 @@ class Settings(BaseSettings):
     # LLM
     GROQ_API_KEY: str = ""
     GEMINI_API_KEY: str = ""
+    OPENROUTER_API_KEY: str = ""
     GROQ_MODEL: str = "llama-3.3-70b-versatile"
     GEMINI_MODEL: str = "gemini-2.0-flash"
 
@@ -23,8 +24,8 @@ class Settings(BaseSettings):
     INDEX_CACHE: str = str(BASE_DIR / "code" / ".cache" / "tfidf_index.pkl")
 
     # Agent
-    MAX_CONCURRENT: int = 10
-    MAX_RESPONSE_TOKENS: int = 400
+    MAX_CONCURRENT: int = 1
+    MAX_RESPONSE_TOKENS: int = 300
 
     class Config:
         env_file = str(BASE_DIR / ".env")

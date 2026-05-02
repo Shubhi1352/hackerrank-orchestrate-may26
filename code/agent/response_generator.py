@@ -11,29 +11,15 @@ logger = logging.getLogger(__name__)
 
 INSUFFICIENT_CONTEXT = "INSUFFICIENT_CONTEXT"
 
-RESPONSE_PROMPT = """You are a helpful support agent for {company}.
-Answer the customer's issue using ONLY the support documentation provided below.
-Do NOT add any information not in the documentation.
-Do NOT invent policies, prices, timelines, procedures, or features.
+RESPONSE_PROMPT = """Support agent for {company}. Answer using ONLY these docs. 
+If docs don't cover it, reply: INSUFFICIENT_CONTEXT
 
-If the documentation does not contain enough information to answer safely,
-respond with exactly this single token: INSUFFICIENT_CONTEXT
-
-Support Documentation:
----
+Docs:
 {chunks}
----
 
-Customer Issue: {issue}
+Issue: {issue}
 
-Guidelines:
-- Be empathetic, clear, and concise (2-3 short paragraphs max)
-- Reference specific steps or policies from the documentation
-- Never promise outcomes you cannot guarantee
-- Never ask for passwords or full card numbers
-- If issue has multiple parts, address the primary one
-
-Your response:"""
+Reply in 2-3 sentences max. Be direct and helpful."""
 
 OUT_OF_SCOPE_RESPONSE = (
     "Thank you for reaching out. Your query appears to be outside the scope "
